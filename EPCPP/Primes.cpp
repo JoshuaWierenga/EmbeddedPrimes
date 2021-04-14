@@ -22,7 +22,7 @@ std::unique_ptr<std::vector<int>> generate_primes(const int n)
 		{
 			primes->push_back(i);
 			
-			if (i <= max_factor)
+			if (i < max_factor)
 			{
 				for (auto j = i + i; j < n; j += i)
 				{
