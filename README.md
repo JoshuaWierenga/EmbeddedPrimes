@@ -3,7 +3,8 @@ Computes primes using Sieve of Eratosthenes Algorithm. While currently this only
 
 ### Todo
 * Add Threading.
-* Add x86_32 and x86_64 assembly versions.
+* Add x86_32 assembly version.
+* Support ARMv6 based cpus, i.e. BCM 2835.
 * Support ARMv6-M based cpus, i.e. Cortex M0+.
 * Support ARMv7E-M based cpus, i.e. Cortex M4(F).
 * Support Xtensa LX6 based cpus, i.e. ESP32.
