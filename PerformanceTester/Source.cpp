@@ -8,6 +8,7 @@
 namespace primes_cpp
 {
 	extern std::unique_ptr<std::vector<int>> generate_primes(int n);
+	extern int* generate_primes(int n, int* length);
 }
 
 namespace primes_asm64
@@ -22,7 +23,8 @@ void main()
 	using std::chrono::duration;
 	using std::chrono::milliseconds;
 
-	auto max_value = 106;
+	//104730 gives 10000 primes
+	auto max_value = 104730;
 
 	auto output = path(".") / "Results";
 	if (exists(output) && !is_directory(output))
@@ -62,8 +64,26 @@ void main()
 	}
 
 	std::cout.rdbuf(std_backup);
-	std::cout << "cpp time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
+	std::cout << "cpp vector time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
 
+	auto c_count = 0;
+	t1 = high_resolution_clock::now();
+	auto* c_primes = primes_cpp::generate_primes(max_value, &c_count);
+	t2 = high_resolution_clock::now();
+
+	const std::ofstream c_out("results\\primesc.txt");
+	std_backup = std::cout.rdbuf(c_out.rdbuf());
+
+	std::cout << '2';
+
+	for (auto i = 1; i < c_count; i++)
+	{
+		std::cout << std::endl << c_primes[i];
+	}
+
+	std::cout.rdbuf(std_backup);
+	std::cout << "cpp pointer time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
+	
 	auto asm_count = 0;
 	t1 = high_resolution_clock::now();
 	auto* asm_primes = primes_asm64::generate_primes(max_value, &asm_count);

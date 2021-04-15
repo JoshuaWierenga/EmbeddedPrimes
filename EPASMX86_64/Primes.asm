@@ -12,7 +12,7 @@ generate_primes PROC
 	call malloc
 	add rsp, 20h
 
-	pop rcx
+	pop rcx ; n
 
 	mov r8, 0
 booleanFillLoop:

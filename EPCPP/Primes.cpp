@@ -36,6 +36,49 @@ namespace primes_cpp
 
 		return primes;
 	}
+
+	int* generate_primes(int n, int* length)
+	{
+		auto* prime_status = static_cast<bool*>(malloc(n));
+
+		for (auto i = 0; i < n; i++)
+		{
+			prime_status[i] = true;
+		}
+
+		const auto max_factor = static_cast<int>(ceil(sqrt(n)));
+		auto prime_count = 0;
+
+		for (auto i = 2; i < n; i++)
+		{
+			if (prime_status[i])
+			{
+				prime_count++;
+
+				if (i < max_factor)
+				{
+					for (int j = i + i; j < n; j += i)
+					{
+						prime_status[j] = false;
+					}
+				}
+			}
+		}
+
+		*length = prime_count;
+
+		int* primes = static_cast<int*>(malloc(prime_count * sizeof*primes));
+
+		for (auto i = 2, j = 0; i < n; i++)
+		{
+			if (prime_status[i])
+			{
+				primes[j++] = i;
+			}
+		}
+
+		return primes;
+	}
 }
 
 /*void main()
