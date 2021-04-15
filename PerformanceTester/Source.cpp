@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-//TODO There has to be a better way access these functions but I have limited cpp knowledge
+//TODO There has to be a better way to access these functions but I have limited cpp knowledge
 namespace primes_cpp
 {
 	extern std::unique_ptr<std::vector<int>> generate_primes(int n);
@@ -37,7 +37,6 @@ void main()
 		std::cout << "Error: Count not create Results folder";
 		return;
 	}
-
 
 #ifdef _DEBUG
 	std::cout << "Debug";

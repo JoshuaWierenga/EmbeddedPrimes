@@ -14,7 +14,7 @@ generate_primes PROC
 
 	pop rcx ; n
 
-	mov r8, 0
+	mov r8, 2
 booleanFillLoop:
 	mov byte ptr [rax + r8], 1
 	inc r8
@@ -26,8 +26,6 @@ booleanFillLoop:
 	; sse2 support is in x86_64 baseline though, it might be fine to assume support
 	cvtsi2sd xmm0, rcx
 	sqrtsd xmm0, xmm0
-	; Assumes sse4.1 support, this requires x86_64-v3 and so cannot realistically be assumed
-	roundsd xmm0, xmm0, 00000010b
 	cvttsd2si r11, xmm0
 
 	mov r8, 2 ; outer loop counter
@@ -39,16 +37,16 @@ primeCheckLoop:
 	inc r9
 	; ensure r8 < r11/max factor for performance since only going that far will give the same result
 	cmp r8, r11
-	jge primeCheckLoopIterate
+	jg primeCheckLoopIterate
 	; inner loop counter
 	mov r10, r8
 	shl r10, 1
 primeCheckLoopInner:
-	; todo confirm this loop cannot write to unallocated memory if r10 >= rcx on the first iteration
+	cmp r10, rcx
+	jnl primeCheckLoopIterate
 	mov byte ptr [rax + r10], 0
 	add r10, r8
-	cmp r10, rcx
-	jl primeCheckLoopInner
+	jmp primeCheckLoopInner
 primeCheckLoopIterate:
 	inc r8
 	cmp r8, rcx
