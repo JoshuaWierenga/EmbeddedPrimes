@@ -90,21 +90,23 @@ namespace primes_cpp
 
 	std::unique_ptr<std::vector<int>> generate_primes_recursive(const int n)
 	{
-		//TODO Hardcode a few extra cases, n = 3, 4?
-		if (n == 2)
-		{
-			return std::make_unique<std::vector<int>>();
-		}
-		if (n <= 4)
+		if (n <= 6)
 		{
 			std::unique_ptr<std::vector<int>> primes(new std::vector<int>);
-			primes->push_back(2);
-			primes->push_back(3);
+			if (n >= 3)
+			{
+				primes->push_back(2);
+				if (n >= 4)
+				{
+					primes->push_back(3);
+				}
+			}
 
 			return primes;
 		}
 
 		auto sqrt_primes = generate_primes_recursive(static_cast<int>(ceil(sqrt(n))));
+		//TODO Set initial size to prevent potential reallocating
 		std::vector<int> remaining_numbers;
 
 		auto max_prime = 2;
@@ -113,6 +115,7 @@ namespace primes_cpp
 			max_prime = sqrt_primes->back() + 1;
 		}
 
+		//TODO Skip every even number
 		//Get all numbers between max sqrt prime and n
 		for (auto i = max_prime; i < n; i++)
 		{
@@ -122,23 +125,24 @@ namespace primes_cpp
 		//All numbers between max sqrt prime and n - All composites between max sqrt prime and n = All primes between max sqrt prime and n
 		for (auto prime : *sqrt_primes)
 		{
-			auto j = 0;
-			//TODO Rewrite as a single while loop with [j] < i: j++; [j] == i: i+=prime, j++ and delete; [j] > i: i+=prime, j++
-			//might also be able to use bigger jumps of size prime for j under specific conditions
-			//TODO Start at first multiple of prime > max_prime, this should reduce time spent incrementing i back reasonable sizes each iteration
-			for (auto i = prime + prime; i < n; i += prime)
+			//TODO Figure out if the while loop needs a condition for j, works as is so only reason would be performance
+			//TODO Replace j with iterator
+			auto i = prime + prime, j = 0;
+			while (i < n)
 			{
-				for (; j < remaining_numbers.size(); j++)
+				if (remaining_numbers[j] >= i)
 				{
-					if (remaining_numbers[j] > i)
-					{
-						break;
-					}
 					if (remaining_numbers[j] == i)
 					{
 						remaining_numbers.erase(remaining_numbers.begin() + j);
-						break;
+						j++;
 					}
+					
+					i += prime;
+				}
+				else
+				{
+					j++;
 				}
 			}
 		}
@@ -188,6 +192,11 @@ namespace primes_cpp
 
 		return primes;
 	}
+
+	/*int* generate_primes_recursive(int n, int* length)
+	{
+
+	}*/
 }
 
 /*void main()
