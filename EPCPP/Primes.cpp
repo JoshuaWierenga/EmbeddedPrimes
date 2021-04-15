@@ -106,7 +106,6 @@ namespace primes_cpp
 		}
 
 		auto sqrt_primes = generate_primes_recursive(static_cast<int>(ceil(sqrt(n))));
-		//TODO Set initial size to prevent potential reallocating
 		std::vector<int> remaining_numbers;
 
 		auto max_prime = 2;
@@ -115,9 +114,15 @@ namespace primes_cpp
 			max_prime = sqrt_primes->back() + 1;
 		}
 
-		//TODO Skip every even number
+		remaining_numbers.reserve((n - max_prime) >> 1);
+
+		if (max_prime >> 1 << 1 == max_prime)
+		{
+			max_prime++;
+		}
+		
 		//Get all numbers between max sqrt prime and n
-		for (auto i = max_prime; i < n; i++)
+		for (auto i = max_prime; i < n; i += 2)
 		{
 			remaining_numbers.push_back(i);
 		}
@@ -125,6 +130,11 @@ namespace primes_cpp
 		//All numbers between max sqrt prime and n - All composites between max sqrt prime and n = All primes between max sqrt prime and n
 		for (auto prime : *sqrt_primes)
 		{
+			if (prime == 2)
+			{
+				continue;
+			}
+			
 			//TODO Figure out if the while loop needs a condition for j, works as is so only reason would be performance
 			//TODO Replace j with iterator
 			auto i = prime + prime, j = 0;
