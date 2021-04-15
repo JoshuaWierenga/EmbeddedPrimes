@@ -3,39 +3,42 @@
 #include <memory>
 #include <vector>
 
-std::unique_ptr<std::vector<int>> generate_primes(const int n)
+namespace primes_cpp
 {
-	std::vector<bool> prime_status;	
-	std::unique_ptr<std::vector<int>> primes(new std::vector<int>);
-
-	//TODO Use one loop if possible
-	for (auto i = 0; i < n; i++)
+	std::unique_ptr<std::vector<int>> generate_primes(const int n)
 	{
-		prime_status.push_back(true);
-	}
+		std::vector<bool> prime_status;
+		std::unique_ptr<std::vector<int>> primes(new std::vector<int>);
 
-	const auto max_factor = static_cast<int>(ceil(sqrt(n)));
-
-	for (auto i = 2; i < n; i++)
-	{
-		if (prime_status[i])
+		//TODO Use one loop if possible
+		for (auto i = 0; i < n; i++)
 		{
-			primes->push_back(i);
-			
-			if (i < max_factor)
+			prime_status.push_back(true);
+		}
+
+		const auto max_factor = static_cast<int>(ceil(sqrt(n)));
+
+		for (auto i = 2; i < n; i++)
+		{
+			if (prime_status[i])
 			{
-				for (auto j = i + i; j < n; j += i)
+				primes->push_back(i);
+
+				if (i < max_factor)
 				{
-					prime_status[j] = false;
+					for (auto j = i + i; j < n; j += i)
+					{
+						prime_status[j] = false;
+					}
 				}
 			}
 		}
+
+		return primes;
 	}
-	
-	return primes;
 }
 
-void main()
+/*void main()
 {
 	//104730 gives 10000 primes
 	const auto primes = generate_primes(104730);
@@ -52,4 +55,4 @@ void main()
 		//std::cout << std::endl << (*primes)[i];
 		std::cout << ", " << (*primes)[i];
 	}
-}
+}*/
