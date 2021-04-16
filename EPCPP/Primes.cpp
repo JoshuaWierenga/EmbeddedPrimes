@@ -11,25 +11,27 @@ namespace primes_cpp
 		std::vector<bool> prime_status;
 		std::unique_ptr<std::vector<int>> primes(new std::vector<int>);
 
-		//TODO Use one loop if possible
-		for (auto i = 0; i < n; i++)
+		prime_status.reserve(n >> 1);
+		for (auto i = 0; i < n; i += 2)
 		{
 			prime_status.push_back(true);
 		}
 
 		const auto max_factor = static_cast<int>(ceil(sqrt(n)));
 
-		for (auto i = 2; i < n; i++)
+		primes->push_back(2);
+
+		for (auto i = 3; i < n; i += 2)
 		{
-			if (prime_status[i])
+			if (prime_status[i >> 1])
 			{
 				primes->push_back(i);
 
 				if (i < max_factor)
 				{
-					for (auto j = i + i; j < n; j += i)
+					for (auto j = i + i + i; j < n; j += i + i)
 					{
-						prime_status[j] = false;
+						prime_status[j >> 1] = false;
 					}
 				}
 			}
@@ -59,6 +61,7 @@ namespace primes_cpp
 		std::unique_ptr<std::vector<int>> primes(new std::vector<int>);
 
 		//TODO Use one loop if possible
+		prime_status.reserve(n);
 		for (auto i = 0; i < n; i++)
 		{
 			prime_status.push_back(true);
@@ -150,34 +153,35 @@ namespace primes_cpp
 				}
 			}
 		}
-		
+
 		sqrt_primes->insert(sqrt_primes->end(), remaining_numbers.begin(), remaining_numbers.end());
 		return sqrt_primes;
 	}
 
 	int* generate_primes(int n, int* length)
 	{
-		auto* prime_status = static_cast<bool*>(malloc(n));
+		const auto count = n >> 1;
+		auto* prime_status = static_cast<bool*>(malloc(count));
 
-		for (auto i = 0; i < n; i++)
+		for (auto i = 0; i < count; i++)
 		{
 			prime_status[i] = true;
 		}
 
 		const auto max_factor = static_cast<int>(ceil(sqrt(n)));
-		auto prime_count = 0;
+		auto prime_count = 1;
 
-		for (auto i = 2; i < n; i++)
+		for (auto i = 3; i < n; i += 2)
 		{
-			if (prime_status[i])
+			if (prime_status[i >> 1])
 			{
 				prime_count++;
 
 				if (i < max_factor)
 				{
-					for (auto j = i + i; j < n; j += i)
+					for (auto j = i + i + i; j < n; j += i + i)
 					{
-						prime_status[j] = false;
+						prime_status[j >> 1] = false;
 					}
 				}
 			}
@@ -186,17 +190,18 @@ namespace primes_cpp
 		*length = prime_count;
 
 		int* primes = static_cast<int*>(malloc(prime_count * sizeof * primes));
+		primes[0] = 2;
 
-		for (auto i = 2, j = 0; i < n; i++)
+		for (auto i = 3, j = 1; i < n; i += 2)
 		{
-			if (prime_status[i])
+			if (prime_status[i >> 1])
 			{
 				primes[j++] = i;
 			}
 		}
 
 		free(prime_status);
-		
+
 		return primes;
 	}
 
