@@ -127,6 +127,7 @@ namespace primes_cpp
 		}
 
 		//All numbers between max sqrt prime and n - All composites between max sqrt prime and n = All primes between max sqrt prime and n
+		//TODO Check if iterator is faster than foreach loop
 		for (auto prime : *sqrt_primes)
 		{
 			if (prime == 2)
@@ -134,7 +135,7 @@ namespace primes_cpp
 				continue;
 			}
 
-			auto i = prime + prime;
+			auto i = prime + prime + prime;
 			auto j = remaining_numbers.begin();
 			while (i < n)
 			{
@@ -145,7 +146,7 @@ namespace primes_cpp
 						j = remaining_numbers.erase(j);
 					}
 
-					i += prime;
+					i += prime + prime;
 				}
 				else
 				{
