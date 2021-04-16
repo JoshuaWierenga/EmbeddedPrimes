@@ -206,10 +206,94 @@ namespace primes_cpp
 		return primes;
 	}
 
-	/*int* generate_primes_recursive(int n, int* length)
-	{
+	int* generate_primes_recursive(int n, int* length)
+	{	
+		if (n <= 6)
+		{
+			int* primes;
+			if (n >= 4)
+			{
+				primes = static_cast<int*>(malloc(2 * sizeof * primes));
+				primes[0] = 2;
+				primes[1] = 3;
+				*length = 2;
+			}
+			else
+			{
+				primes = static_cast<int*>(malloc(sizeof * primes));
+				primes[0] = 2;
+				*length = 1;
+			}
 
-	}*/
+			return primes;
+		}
+
+		int sqrt_prime_count;
+		auto* sqrt_primes = generate_primes_recursive(static_cast<int>(ceil(sqrt(n))), &sqrt_prime_count);
+
+		auto next_potential_prime = sqrt_primes[sqrt_prime_count - 1] + 1;
+		if (next_potential_prime >> 1 << 1 == next_potential_prime)
+		{
+			next_potential_prime++;
+		}
+
+		auto possible_prime_count = (n - next_potential_prime + 1) >> 1;
+		
+		int* remaining_numbers = static_cast<int*>(malloc(possible_prime_count * sizeof *remaining_numbers));
+
+		//Get all odd numbers between next potential prime and n
+		for (auto i = next_potential_prime, j = 0; i < n; i += 2, j++)
+		{
+			remaining_numbers[j] = i;
+		}
+		
+		for (auto i = 1; i < sqrt_prime_count; i++)
+		{
+			const auto prime = sqrt_primes[i];
+			auto factor = prime + prime + prime;
+			
+			auto position = 0;
+			while (factor < n)
+			{
+				if (remaining_numbers[position] >= factor)
+				{
+					if (remaining_numbers[position] == factor)
+					{
+						remaining_numbers[position] = 0;
+						position++;
+						possible_prime_count--;
+					}
+
+					factor += prime + prime;
+				}
+				else
+				{
+					position++;
+				}
+			}
+		}
+
+
+		auto* const new_primes = static_cast<int*>(realloc(sqrt_primes, (sqrt_prime_count + possible_prime_count) * 4));
+		if (new_primes == nullptr)
+		{
+			*length = sqrt_prime_count;
+			return sqrt_primes;
+		}
+		
+		*length = sqrt_prime_count + possible_prime_count;
+
+		for (auto i = 0, j = sqrt_prime_count; j < sqrt_prime_count + possible_prime_count; i++)
+		{
+			if (remaining_numbers[i] != 0)
+			{
+				new_primes[j] = remaining_numbers[i];
+				j++;
+			}
+		}
+		
+		return new_primes;
+	}
 }
 
 /*void main()
