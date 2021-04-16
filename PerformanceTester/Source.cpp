@@ -18,11 +18,59 @@ namespace primes_asm64
 	extern "C" int* generate_primes(int n, int* length);
 }
 
+typedef std::unique_ptr<std::vector<int>> (*vector_function)(int n);
+typedef int* (*pointer_function)(int n, int* length);
+
+void evaluate_vector_algorithm(const int max_value, const vector_function algorithm, const std::string name, const std::string file_name)
+{
+	using std::chrono::high_resolution_clock;
+	using std::chrono::duration;
+
+	const auto t1 = high_resolution_clock::now();
+	const auto primes = algorithm(max_value);
+	const auto t2 = high_resolution_clock::now();
+
+	const std::ofstream out_cpp("results\\primes" + file_name + ".txt");
+	auto* std_backup = std::cout.rdbuf(out_cpp.rdbuf());
+
+	std::cout << '2';
+	
+	for (auto i = 1; i < primes->size(); i++)
+	{
+		std::cout << std::endl << (*primes)[i];
+	}
+
+	std::cout.rdbuf(std_backup);
+	std::cout << name << " time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
+}
+
+void evaluate_pointer_algorithm(const int max_value, const pointer_function algorithm, const std::string name, const std::string file_name)
+{
+	using std::chrono::high_resolution_clock;
+	using std::chrono::duration;
+
+	int prime_count;
+	const auto t1 = high_resolution_clock::now();
+	auto* const primes = algorithm(max_value, &prime_count);
+	const auto t2 = high_resolution_clock::now();
+
+	const std::ofstream out_cpp("results\\primes" + file_name + ".txt");
+	auto* std_backup = std::cout.rdbuf(out_cpp.rdbuf());
+
+	std::cout << '2';
+
+	for (auto i = 1; i < prime_count; i++)
+	{
+		std::cout << std::endl << primes[i];
+	}
+
+	std::cout.rdbuf(std_backup);
+	std::cout << name << " time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
+}
+
 void main()
 {
 	using std::filesystem::path;
-	using std::chrono::high_resolution_clock;
-	using std::chrono::duration;
 	using std::chrono::milliseconds;
 
 	//104730 gives 10000 primes
@@ -48,90 +96,11 @@ void main()
 
 	std::cout << " performance for generating all primes less than " << max_value << std::endl;
 	
-	auto t1 = high_resolution_clock::now();
-	auto cpp_primes = primes_cpp::generate_primes(max_value);
-	auto t2 = high_resolution_clock::now();
+	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes, "cpp vector", "cppvector");
+	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_multi_threaded, "cpp vector multi threaded", "cppvectormp");
+	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_recursive, "cpp vector recursive", "cppvectorrecursive");
 
-	const std::ofstream out_cpp("results\\primescpp.txt");
-	auto* std_backup = std::cout.rdbuf(out_cpp.rdbuf());
-
-	std::cout << '2';
-	
-	for (auto i = 1; i < cpp_primes->size(); i++)
-	{
-		std::cout << std::endl << (*cpp_primes)[i];
-	}
-
-	std::cout.rdbuf(std_backup);
-	std::cout << "cpp vector time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
-
-	t1 = high_resolution_clock::now();
-	auto cpp_mp_primes = primes_cpp::generate_primes_multi_threaded(max_value);
-	t2 = high_resolution_clock::now();
-
-	const std::ofstream out_cpp_mp("results\\primescppmp.txt");
-	std_backup = std::cout.rdbuf(out_cpp_mp.rdbuf());
-
-	std::cout << '2';
-
-	for (auto i = 1; i < cpp_mp_primes->size(); i++)
-	{
-		std::cout << std::endl << (*cpp_mp_primes)[i];
-	}
-
-	std::cout.rdbuf(std_backup);
-	std::cout << "cpp vector multi threaded time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
-
-	t1 = high_resolution_clock::now();
-	auto cpp_recursive_primes = primes_cpp::generate_primes_recursive(max_value);
-	t2 = high_resolution_clock::now();
-
-	const std::ofstream out_cpp_recursive("results\\primescprecursive.txt");
-	std_backup = std::cout.rdbuf(out_cpp_recursive.rdbuf());
-
-	std::cout << '2';
-
-	for (auto i = 1; i < cpp_recursive_primes->size(); i++)
-	{
-		std::cout << std::endl << (*cpp_recursive_primes)[i];
-	}
-
-	std::cout.rdbuf(std_backup);
-	std::cout << "cpp vector recursive time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
-	
-	auto c_count = 0;
-	t1 = high_resolution_clock::now();
-	auto* c_primes = primes_cpp::generate_primes(max_value, &c_count);
-	t2 = high_resolution_clock::now();
-
-	const std::ofstream c_out("results\\primesc.txt");
-	std_backup = std::cout.rdbuf(c_out.rdbuf());
-
-	std::cout << '2';
-
-	for (auto i = 1; i < c_count; i++)
-	{
-		std::cout << std::endl << c_primes[i];
-	}
-
-	std::cout.rdbuf(std_backup);
-	std::cout << "cpp pointer time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
-	
-	auto asm_count = 0;
-	t1 = high_resolution_clock::now();
-	auto* asm_primes = primes_asm64::generate_primes(max_value, &asm_count);
-	t2 = high_resolution_clock::now();
-
-	const std::ofstream asm_out("results\\primesasm.txt");
-	std_backup = std::cout.rdbuf(asm_out.rdbuf());
-
-	std::cout << '2';
-
-	for (auto i = 1; i < asm_count; i++)
-	{
-		std::cout << std::endl << asm_primes[i];
-	}
-
-	std::cout.rdbuf(std_backup);
-	std::cout << "x86_64 asm time: " << duration<double, std::milli>(t2 - t1).count() << "ms";
+	evaluate_pointer_algorithm(max_value, primes_cpp::generate_primes, "cpp pointer", "cpppointer");
+	evaluate_pointer_algorithm(max_value, primes_asm64::generate_primes, "x86_64 asm", "asm");
 }
+
