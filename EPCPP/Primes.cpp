@@ -108,17 +108,17 @@ namespace primes_cpp
 		auto sqrt_primes = generate_primes_recursive(static_cast<int>(ceil(sqrt(n))));
 		std::vector<int> remaining_numbers;
 
-		auto max_prime = sqrt_primes->back() + 1;
+		auto next_potential_prime = sqrt_primes->back() + 1;
 
-		remaining_numbers.reserve((n - max_prime) >> 1);
+		remaining_numbers.reserve((n - next_potential_prime) >> 1);
 
-		if (max_prime >> 1 << 1 == max_prime)
+		if (next_potential_prime >> 1 << 1 == next_potential_prime)
 		{
-			max_prime++;
+			next_potential_prime++;
 		}
 
-		//Get all odd between max sqrt prime and n
-		for (auto i = max_prime; i < n; i += 2)
+		//Get all odd numbers between next potential prime and n
+		for (auto i = next_potential_prime; i < n; i += 2)
 		{
 			remaining_numbers.push_back(i);
 		}
@@ -195,6 +195,8 @@ namespace primes_cpp
 			}
 		}
 
+		free(prime_status);
+		
 		return primes;
 	}
 

@@ -1,4 +1,5 @@
 extern malloc: PROC
+extern free: PROC
 
 .code
 
@@ -76,6 +77,14 @@ primeFillLoopIterate:
 	inc r8
 	cmp r8, r12
 	jng primeFillLoop
+
+	mov rcx, r13
+	mov r13, rax
+	sub rsp, 20h
+	call free
+	add rsp, 20h
+
+	mov rax, r13
 
 	pop r13
 	pop r12

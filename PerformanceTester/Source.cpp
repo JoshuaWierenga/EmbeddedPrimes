@@ -64,6 +64,8 @@ void evaluate_pointer_algorithm(const int max_value, const pointer_function algo
 		std::cout << std::endl << primes[i];
 	}
 
+	free(primes);
+
 	std::cout.rdbuf(std_backup);
 	std::cout << name << " time: " << duration<double, std::milli>(t2 - t1).count() << "ms" << std::endl;
 }
