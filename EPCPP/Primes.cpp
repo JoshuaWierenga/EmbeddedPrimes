@@ -163,7 +163,7 @@ namespace primes_cpp
 		const auto count = n >> 1;
 		auto* prime_status = static_cast<bool*>(malloc(count));
 
-		for (auto i = 0; i < count; i++)
+		for (auto i = 1; i < count; i++)
 		{
 			prime_status[i] = true;
 		}
