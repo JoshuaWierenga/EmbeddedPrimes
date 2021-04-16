@@ -108,11 +108,7 @@ namespace primes_cpp
 		auto sqrt_primes = generate_primes_recursive(static_cast<int>(ceil(sqrt(n))));
 		std::vector<int> remaining_numbers;
 
-		auto max_prime = 2;
-		if (!sqrt_primes->empty())
-		{
-			max_prime = sqrt_primes->back() + 1;
-		}
+		auto max_prime = sqrt_primes->back() + 1;
 
 		remaining_numbers.reserve((n - max_prime) >> 1);
 
@@ -120,8 +116,8 @@ namespace primes_cpp
 		{
 			max_prime++;
 		}
-		
-		//Get all numbers between max sqrt prime and n
+
+		//Get all odd between max sqrt prime and n
 		for (auto i = max_prime; i < n; i += 2)
 		{
 			remaining_numbers.push_back(i);
@@ -134,28 +130,27 @@ namespace primes_cpp
 			{
 				continue;
 			}
-			
-			//TODO Figure out if the while loop needs a condition for j, works as is so only reason would be performance
-			//TODO Replace j with iterator
-			auto i = prime + prime, j = 0;
+
+			auto i = prime + prime;
+			auto j = remaining_numbers.begin();
 			while (i < n)
 			{
-				if (remaining_numbers[j] >= i)
+				if (*j >= i)
 				{
-					if (remaining_numbers[j] == i)
+					if (*j == i)
 					{
-						remaining_numbers.erase(remaining_numbers.begin() + j);
-						j++;
+						j = remaining_numbers.erase(j);
 					}
-					
+
 					i += prime;
 				}
 				else
 				{
-					j++;
+					j += 1;
 				}
 			}
 		}
+		
 		sqrt_primes->insert(sqrt_primes->end(), remaining_numbers.begin(), remaining_numbers.end());
 		return sqrt_primes;
 	}
