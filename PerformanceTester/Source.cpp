@@ -10,6 +10,7 @@ namespace primes_cpp
 	extern std::unique_ptr<std::vector<int>> generate_primes(int n);
 	std::unique_ptr<std::vector<int>> generate_primes_multi_threaded(int n);
 	std::unique_ptr<std::vector<int>> generate_primes_recursive(int n);
+	std::unique_ptr<std::vector<int>> generate_primes_atkin(int n);
 	extern int* generate_primes(int n, int* length);
 	extern int* generate_primes_recursive(int n, int* length);
 }
@@ -102,6 +103,7 @@ void main()
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes, "cpp vector", "cppvector");
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_multi_threaded, "cpp vector multi threaded", "cppvectormp");
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_recursive, "cpp vector recursive", "cppvectorrecursive");
+	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_atkin, "cpp vector atkin", "cppvectoratkin");
 
 	evaluate_pointer_algorithm(max_value, primes_cpp::generate_primes, "cpp pointer", "cpppointer");
 	evaluate_pointer_algorithm(max_value, primes_cpp::generate_primes_recursive, "cpp pointer recursive", "cpppointerrecursive");

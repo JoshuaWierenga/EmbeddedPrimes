@@ -159,6 +159,98 @@ namespace primes_cpp
 		return sqrt_primes;
 	}
 
+	std::unique_ptr<std::vector<int>> generate_primes_atkin(const int n)
+	{
+		//TODO: Use std::array<int> or even int[]?
+		std::unique_ptr<std::vector<int>> results(new std::vector<int>);
+		results->reserve(3);
+		results->push_back(2);
+		results->push_back(3);
+		results->push_back(5);
+
+		std::vector<bool> prime_status;
+		prime_status.reserve(n);
+
+		for (auto i = 0; i < n; i++)
+		{
+			prime_status.push_back(false);
+
+			const auto number = i % 60;
+
+			//TODO Optimise loop variables, some can only been even or odd
+			switch (number)
+			{
+			case 1:
+			case 13:
+			case 17:
+			case 29:
+			case 37:
+			case 41:
+			case 49:
+			case 53:
+				for (auto x = 1; x < n; x++)
+				{
+					for (auto y = 1; y < n; y += 2)
+					{
+						if (number == ((x * x) << 2) + y * y)
+						{
+							prime_status[i] = !prime_status[i];
+						}
+					}
+				}
+				break;
+			case 7:
+			case 19:
+			case 31:
+			case 43:
+				for (auto x = 1; x < n; x += 2)
+				{
+					for (auto y = 2; y < n; y += 2)
+					{
+						if (number == 3 * x * x + y * y)
+						{
+							prime_status[i] = !prime_status[i];
+						}
+					}
+				}
+				break;
+			case 11:
+			case 23:
+			case 47:
+			case 59:
+				for (auto x = 2; x < n; x++)
+				{
+					for (auto y = x - 1; y > 0; y -= 2)
+					{
+						if (number == 3 * x * x - y * y)
+						{
+							prime_status[i] = !prime_status[i];
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		for (auto i = 0; i < n; i++)
+		{
+			if (prime_status[i])
+			{
+				results->push_back(i);
+
+				const auto square = i * i;
+				for (auto j = square << 1; j < n; j += square)
+				{
+					prime_status[j] = false;
+				}
+			}
+		}
+
+		return results;
+	}
+
 	int* generate_primes(int n, int* length)
 	{
 		const auto count = n >> 1;
