@@ -207,7 +207,7 @@ namespace primes_cpp
 	}
 
 	int* generate_primes_recursive(int n, int* length)
-	{	
+	{
 		if (n <= 6)
 		{
 			int* primes;
@@ -238,7 +238,7 @@ namespace primes_cpp
 		}
 
 		auto possible_prime_count = (n - next_potential_prime + 1) >> 1;
-		
+
 		int* remaining_numbers = static_cast<int*>(malloc(possible_prime_count * sizeof *remaining_numbers));
 
 		//Get all odd numbers between next potential prime and n
@@ -246,12 +246,12 @@ namespace primes_cpp
 		{
 			remaining_numbers[j] = i;
 		}
-		
+
 		for (auto i = 1; i < sqrt_prime_count; i++)
 		{
 			const auto prime = sqrt_primes[i];
 			auto factor = prime + prime + prime;
-			
+
 			auto position = 0;
 			while (factor < n)
 			{
@@ -280,7 +280,7 @@ namespace primes_cpp
 			*length = sqrt_prime_count;
 			return sqrt_primes;
 		}
-		
+
 		*length = sqrt_prime_count + possible_prime_count;
 
 		for (auto i = 0, j = sqrt_prime_count; j < sqrt_prime_count + possible_prime_count; i++)
@@ -291,7 +291,7 @@ namespace primes_cpp
 				j++;
 			}
 		}
-		
+
 		return new_primes;
 	}
 }

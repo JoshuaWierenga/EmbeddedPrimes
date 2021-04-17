@@ -19,7 +19,7 @@ namespace primes_asm64
 	extern "C" int* generate_primes(int n, int* length);
 }
 
-typedef std::unique_ptr<std::vector<int>> (*vector_function)(int n);
+typedef std::unique_ptr<std::vector<int>>(*vector_function)(int n);
 typedef int* (*pointer_function)(int n, int* length);
 
 void evaluate_vector_algorithm(const int max_value, const vector_function algorithm, const std::string name, const std::string file_name)
@@ -35,7 +35,7 @@ void evaluate_vector_algorithm(const int max_value, const vector_function algori
 	auto* std_backup = std::cout.rdbuf(out_cpp.rdbuf());
 
 	std::cout << '2';
-	
+
 	for (auto i = 1; i < primes->size(); i++)
 	{
 		std::cout << std::endl << (*primes)[i];
@@ -98,7 +98,7 @@ void main()
 #endif 
 
 	std::cout << " performance for generating all primes less than " << max_value << std::endl;
-	
+
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes, "cpp vector", "cppvector");
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_multi_threaded, "cpp vector multi threaded", "cppvectormp");
 	evaluate_vector_algorithm(max_value, primes_cpp::generate_primes_recursive, "cpp vector recursive", "cppvectorrecursive");
