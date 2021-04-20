@@ -37,12 +37,13 @@ booleanFillLoop:
 	mov r9, 1 ; prime count
 primeCheckLoop:
     ; ensure prime status
+	; TODO: See if any performance can be gained by moving this check, 3 will always pass
 	mov rcx, r8
 	shr rcx, 1
 	cmp byte ptr [rax + rcx], 1
 	jne primeCheckLoopIterate
 	inc r9
-	; ensure r8 < r11/max factor for performance since only going that far will give the same result
+	; ensure r8 <= r11/max factor for performance since only going that far will give the same result
 	cmp r8, r11
 	jg primeCheckLoopIterate
 	; inner loop counter
